@@ -14,7 +14,8 @@ void main() {
 
     group('Method: getAllCompanies', () {
       test('sanity', () async {
-        await companiesApi.getAllCompanies();
+        final companies = await companiesApi.getAllCompanies();
+        print(companies);
       });
     });
   });

@@ -7,7 +7,7 @@ final class CompaniesApi {
   final Dio _dio;
   Future<List<dynamic>> getAllCompanies() async {
     try {
-      final response = await _dio.get<List<dynamic>>(EndPoints.companies.url);
+      final response = await _dio.get<List<dynamic>>(kEndPoints.companies);
       return response.data ?? [];
     } on DioException catch (e) {
       if (e.response != null) {

@@ -7,8 +7,11 @@ final class CompaniesRepository implements CompaniesRepositoryInterface {
   const CompaniesRepository({required CompaniesApi companiesApi})
       : _companiesApi = companiesApi;
   @override
-  Future<List<Company>> getAllCompanies() async =>
-      (await _companiesApi.getAllCompanies())
-          .map((e) => Company.fromJson(e as Map<String, dynamic>))
-          .toList();
+  Future<List<Company>> getAllCompanies() async {
+    final companies = (await _companiesApi.getAllCompanies())
+        .map((e) => Company.fromJson(e as Map<String, dynamic>))
+        .toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+    return companies;
+  }
 }

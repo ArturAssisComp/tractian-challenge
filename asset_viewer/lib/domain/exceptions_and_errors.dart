@@ -8,3 +8,9 @@ final class GetCompaniesException extends DomainException {
   @override
   String toString() => 'GetCompaniesException: $message';
 }
+
+final class GetResourcesException extends DomainException {
+  const GetResourcesException(super.message);
+  @override
+  String toString() => 'GetResourcesException: $message';
+}
