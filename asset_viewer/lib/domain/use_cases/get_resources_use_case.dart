@@ -3,9 +3,9 @@ import 'package:asset_viewer/domain/entities/resource.dart';
 import 'package:asset_viewer/domain/exceptions_and_errors.dart';
 import 'package:asset_viewer/domain/repository/resources_repository_interface.dart';
 
-final class GetLocationsUseCase {
+final class GetResourcesUseCase {
   final ResourcesRepositoryInterface _resourcesRepositoryInterface;
-  const GetLocationsUseCase({
+  const GetResourcesUseCase({
     required ResourcesRepositoryInterface resourcesRepositoryInterface,
   }) : _resourcesRepositoryInterface = resourcesRepositoryInterface;
   Future<List<Resource>> call({required String companyId}) async {
