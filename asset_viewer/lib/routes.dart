@@ -17,7 +17,8 @@ GoRouter generateRouter() => GoRouter(
                 pageBuilder: (context, state) {
                   // TODO(ArturAssisComp): add a cache to store the company id
                   // in the case extra is empty.
-                  final companyId = state.extra as String? ?? '';
+                  final companyId =
+                      state.extra as String? ?? '662fd0fab3fd5656edb39af5';
                   return MaterialPage(
                     key: state.pageKey,
                     child: AssetPage(companyId: companyId),

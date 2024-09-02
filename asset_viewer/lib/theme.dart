@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 final themeData = ThemeData(
-  listTileTheme: ListTileThemeData(
-    tileColor: Color(0xFF2188FF),
+  colorSchemeSeed: kPrimaryColor,
+  listTileTheme: const ListTileThemeData(
+    tileColor: kPrimaryColor,
     textColor: Colors.white,
     iconColor: Colors.white,
   ),
@@ -12,3 +13,5 @@ final themeData = ThemeData(
       titleTextStyle: TextStyle(color: Colors.white, fontSize: 18)),
   useMaterial3: true,
 );
+
+const kPrimaryColor = Color(0xFF2188FF);

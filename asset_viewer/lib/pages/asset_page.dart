@@ -3,6 +3,7 @@ import 'package:asset_viewer/data/data_provider/constants.dart';
 import 'package:asset_viewer/data/data_provider/locations_api.dart';
 import 'package:asset_viewer/data/repository/resources_repository.dart';
 import 'package:asset_viewer/domain/use_cases/get_resources_use_case.dart';
+import 'package:asset_viewer/widgets/resource_presentation_widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -25,13 +26,13 @@ class AssetPage extends StatelessWidget {
                       dio: Dio(kDioOptions))))(companyId: companyId),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             }
             final resources = snapshot.data!;
             return ListView.builder(
               itemCount: resources.length,
               itemBuilder: (context, index) =>
-                  ListTile(title: Text(resources[index].name)),
+                  ResourcePresentationWidget(resource: resources[index]),
             );
           },
         ),
