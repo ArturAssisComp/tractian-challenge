@@ -6,6 +6,7 @@ import 'package:asset_viewer/data/data_provider/constants.dart';
 import 'package:asset_viewer/data/data_provider/locations_api.dart';
 import 'package:asset_viewer/data/repository/resources_repository.dart';
 import 'package:asset_viewer/domain/entities/resource.dart';
+import 'package:asset_viewer/domain/use_cases/filter_resources_use_case.dart';
 import 'package:asset_viewer/domain/use_cases/get_resources_use_case.dart';
 import 'package:asset_viewer/widgets/resource_presentation_widget.dart';
 import 'package:dio/dio.dart';
@@ -20,33 +21,92 @@ final _kEnergySensorIcon = ImageIcon(
   AssetImage(kAssets.outlinedEnergySensor),
 );
 
-class AssetPage extends StatefulWidget {
+class AssetPage extends StatelessWidget {
   static const path = 'assetPage';
   static const url = '/assetPage';
+  final String companyId;
   const AssetPage({
     required this.companyId,
     super.key,
   });
-  final String companyId;
 
   @override
-  State<AssetPage> createState() => _AssetPageState();
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Assets',
+            style: TextStyle(fontSize: 18),
+          ),
+        ),
+        body: FutureBuilder(
+          future: GetResourcesUseCase(
+            resourcesRepositoryInterface: ResourcesRepository(
+              locationsApi: LocationsApi(dio: Dio(kDioOptions)),
+              assetsAndComponentsApi: AssetsAndComponentsApi(
+                dio: Dio(kDioOptions),
+              ),
+            ),
+          )(companyId: companyId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final resources = snapshot.data!;
+            return _AssetPage(resources: resources);
+          },
+        ),
+      );
 }
 
-class _AssetPageState extends State<AssetPage> {
+class _AssetPage extends StatefulWidget {
+  final List<Resource> resources;
+  const _AssetPage({
+    required this.resources,
+  });
+
+  @override
+  State<_AssetPage> createState() => _AssetPageState();
+}
+
+class _AssetPageState extends State<_AssetPage> {
   Set<String>? filteredEnergySensor;
   Set<String>? filteredCriticalStatus;
   Set<String>? filteredName;
+  Set<String>? currentFilter;
+  bool energySensorFilterIsActive = false;
+  bool criticalStatusFilterIsActive = false;
+  final filterResourcesUseCase = const FilterResourcesUseCase();
+
+  void updateFilter() {
+    if (!energySensorFilterIsActive &&
+        !criticalStatusFilterIsActive &&
+        filteredName == null) {
+      filterController.add(null);
+      return;
+    }
+    final newFilter = <String>{};
+    if (energySensorFilterIsActive) {
+      newFilter.addAll(filteredEnergySensor!);
+    }
+    if (criticalStatusFilterIsActive) {
+      if (newFilter.isEmpty) {
+        newFilter.addAll(filteredCriticalStatus!);
+      } else {
+        newFilter.intersection(filteredCriticalStatus!);
+      }
+    }
+    if (filteredName != null) {
+      if (newFilter.isEmpty) {
+        newFilter.addAll(filteredName!);
+      } else {
+        newFilter.intersection(filteredName!);
+      }
+    }
+    filterController.add(newFilter);
+  }
+
   StreamController<Set<String>?> filterController =
       StreamController<Set<String>?>();
-  late Future<List<Resource>> resourcesFuture = GetResourcesUseCase(
-    resourcesRepositoryInterface: ResourcesRepository(
-      locationsApi: LocationsApi(dio: Dio(kDioOptions)),
-      assetsAndComponentsApi: AssetsAndComponentsApi(
-        dio: Dio(kDioOptions),
-      ),
-    ),
-  )(companyId: widget.companyId);
 
   @override
   void initState() {
@@ -61,129 +121,128 @@ class _AssetPageState extends State<AssetPage> {
   }
 
   @override
-  Widget build(BuildContext context) => SafeArea(
-        child: Scaffold(
-          body: Column(
+  Widget build(BuildContext context) {
+    final resources = widget.resources;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
+          child: SizedBox(
+            height: 36,
+            child: TextField(
+              onChanged: (newValue) {
+                if (newValue.isEmpty) {
+                  filteredName = null;
+                  updateFilter();
+                  return;
+                }
+                final sanitizedNewValue = newValue.trim().toLowerCase();
+                filteredName = filterResourcesUseCase(
+                    resources: resources,
+                    query: (e) =>
+                        e.name.toLowerCase().contains(sanitizedNewValue));
+                updateFilter();
+              },
+              style: const TextStyle(fontSize: 14),
+              textAlignVertical: TextAlignVertical.center,
+              decoration: const InputDecoration(
+                filled: true,
+                prefixIcon: Icon(Icons.search, color: Color(0xFF8E98A3)),
+                border: OutlineInputBorder(borderSide: BorderSide.none),
+                fillColor: Color(0xFFEAEFF3),
+                contentPadding: EdgeInsets.zero,
+                hintText: 'Search',
+                hintStyle: TextStyle(fontSize: 14, color: Color(0xFF8E98A3)),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 16, right: 16),
+          child: Row(
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                child: SizedBox(
-                  height: 36,
-                  child: TextField(
-                    style: TextStyle(fontSize: 14),
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      filled: true,
-                      prefixIcon: Icon(Icons.search, color: Color(0xFF8E98A3)),
-                      border: OutlineInputBorder(borderSide: BorderSide.none),
-                      fillColor: Color(0xFFEAEFF3),
-                      contentPadding: EdgeInsets.zero,
-                      hintText: 'Search',
-                      hintStyle:
-                          TextStyle(fontSize: 14, color: Color(0xFF8E98A3)),
+              OutlinedButton(
+                style: ButtonStyle(
+                  fixedSize: const WidgetStatePropertyAll(Size(166, 32)),
+                  padding: const WidgetStatePropertyAll(
+                    EdgeInsets.only(left: 16),
+                  ),
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, bottom: 16, right: 16),
+                onPressed: () {},
                 child: Row(
                   children: [
-                    OutlinedButton(
-                      style: ButtonStyle(
-                        fixedSize: const WidgetStatePropertyAll(Size(166, 32)),
-                        padding: const WidgetStatePropertyAll(
-                          EdgeInsets.only(left: 16),
-                        ),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        children: [
-                          _kEnergySensorIcon,
-                          const SizedBox(width: 6),
-                          const Text(
-                            'Sensor de energia',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    OutlinedButton(
-                      style: ButtonStyle(
-                        fixedSize: const WidgetStatePropertyAll(Size(94, 32)),
-                        padding: const WidgetStatePropertyAll(
-                          EdgeInsets.only(left: 16),
-                        ),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Row(
-                        children: [
-                          _kAlertIcon,
-                          const SizedBox(width: 6),
-                          const Text(
-                            'Crítico',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                        ],
-                      ),
+                    _kEnergySensorIcon,
+                    const SizedBox(width: 6),
+                    const Text(
+                      'Sensor de energia',
+                      style: TextStyle(fontSize: 14),
                     ),
                   ],
                 ),
               ),
-              const Divider(),
-              Expanded(
-                child: FutureBuilder(
-                  future: resourcesFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.done) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    final resources = snapshot.data!;
-                    return StreamBuilder(
-                      stream: filterController.stream,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        final filteredIds = snapshot.data;
-                        final Iterable<Resource> filteredTopLevelResources;
-                        if (filteredIds == null) {
-                          filteredTopLevelResources = resources;
-                        } else {
-                          filteredTopLevelResources = resources
-                              .where((e) => filteredIds.contains(e.id));
-                        }
-                        return ListView.builder(
-                          itemCount: filteredTopLevelResources.length,
-                          itemBuilder: (context, index) =>
-                              ResourcePresentationWidget(
-                            resource:
-                                filteredTopLevelResources.elementAt(index),
-                            filteredResources: filteredIds,
-                          ),
-                        );
-                      },
-                    );
-                  },
+              const SizedBox(width: 8),
+              OutlinedButton(
+                style: ButtonStyle(
+                  fixedSize: const WidgetStatePropertyAll(Size(94, 32)),
+                  padding: const WidgetStatePropertyAll(
+                    EdgeInsets.only(left: 16),
+                  ),
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                ),
+                onPressed: () {},
+                child: Row(
+                  children: [
+                    _kAlertIcon,
+                    const SizedBox(width: 6),
+                    const Text(
+                      'Crítico',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-      );
+        const Divider(),
+        Expanded(
+          child: StreamBuilder(
+            stream: filterController.stream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final filteredIds = snapshot.data;
+              final Iterable<Resource> filteredTopLevelResources;
+              if (filteredIds == null) {
+                filteredTopLevelResources = resources;
+              } else {
+                filteredTopLevelResources =
+                    resources.where((e) => filteredIds.contains(e.id));
+              }
+              return ListView.builder(
+                itemCount: filteredTopLevelResources.length,
+                itemBuilder: (context, index) => ResourcePresentationWidget(
+                  resource: filteredTopLevelResources.elementAt(index),
+                  filteredResources: filteredIds,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }
