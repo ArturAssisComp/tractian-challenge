@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 final themeData = ThemeData(
-  colorSchemeSeed: kPrimaryColor,
+  colorScheme: ColorScheme.fromSeed(seedColor: kPrimaryColor)
+      .copyWith(surface: Colors.white),
   listTileTheme: const ListTileThemeData(
     tileColor: kPrimaryColor,
     textColor: Colors.white,

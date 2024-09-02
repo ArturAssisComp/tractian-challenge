@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:asset_viewer/constants.dart';
 import 'package:asset_viewer/data/data_provider/assets_and_components_api.dart';
 import 'package:asset_viewer/data/data_provider/constants.dart';
 import 'package:asset_viewer/data/data_provider/locations_api.dart';
 import 'package:asset_viewer/data/repository/resources_repository.dart';
+import 'package:asset_viewer/domain/entities/resource.dart';
 import 'package:asset_viewer/domain/use_cases/get_resources_use_case.dart';
 import 'package:asset_viewer/widgets/resource_presentation_widget.dart';
 import 'package:dio/dio.dart';
@@ -17,7 +20,7 @@ final _kEnergySensorIcon = ImageIcon(
   AssetImage(kAssets.outlinedEnergySensor),
 );
 
-class AssetPage extends StatelessWidget {
+class AssetPage extends StatefulWidget {
   static const path = 'assetPage';
   static const url = '/assetPage';
   const AssetPage({
@@ -25,6 +28,37 @@ class AssetPage extends StatelessWidget {
     super.key,
   });
   final String companyId;
+
+  @override
+  State<AssetPage> createState() => _AssetPageState();
+}
+
+class _AssetPageState extends State<AssetPage> {
+  Set<String>? filteredEnergySensor;
+  Set<String>? filteredCriticalStatus;
+  Set<String>? filteredName;
+  StreamController<Set<String>?> filterController =
+      StreamController<Set<String>?>();
+  late Future<List<Resource>> resourcesFuture = GetResourcesUseCase(
+    resourcesRepositoryInterface: ResourcesRepository(
+      locationsApi: LocationsApi(dio: Dio(kDioOptions)),
+      assetsAndComponentsApi: AssetsAndComponentsApi(
+        dio: Dio(kDioOptions),
+      ),
+    ),
+  )(companyId: widget.companyId);
+
+  @override
+  void initState() {
+    super.initState();
+    filterController.add(null);
+  }
+
+  @override
+  Future<void> dispose() async {
+    super.dispose();
+    await filterController.close();
+  }
 
   @override
   Widget build(BuildContext context) => SafeArea(
@@ -60,9 +94,13 @@ class AssetPage extends StatelessWidget {
                       style: ButtonStyle(
                         fixedSize: const WidgetStatePropertyAll(Size(166, 32)),
                         padding: const WidgetStatePropertyAll(
-                            EdgeInsets.only(left: 16)),
-                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(3))),
+                          EdgeInsets.only(left: 16),
+                        ),
+                        shape: WidgetStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
                       ),
                       onPressed: () {},
                       child: Row(
@@ -81,9 +119,13 @@ class AssetPage extends StatelessWidget {
                       style: ButtonStyle(
                         fixedSize: const WidgetStatePropertyAll(Size(94, 32)),
                         padding: const WidgetStatePropertyAll(
-                            EdgeInsets.only(left: 16)),
-                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(3))),
+                          EdgeInsets.only(left: 16),
+                        ),
+                        shape: WidgetStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
                       ),
                       onPressed: () {},
                       child: Row(
@@ -93,7 +135,7 @@ class AssetPage extends StatelessWidget {
                           const Text(
                             'Crítico',
                             style: TextStyle(fontSize: 14),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -103,25 +145,39 @@ class AssetPage extends StatelessWidget {
               const Divider(),
               Expanded(
                 child: FutureBuilder(
-                  future: GetResourcesUseCase(
-                    resourcesRepositoryInterface: ResourcesRepository(
-                      locationsApi: LocationsApi(dio: Dio(kDioOptions)),
-                      assetsAndComponentsApi: AssetsAndComponentsApi(
-                        dio: Dio(kDioOptions),
-                      ),
-                    ),
-                  )(companyId: companyId),
+                  future: resourcesFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState != ConnectionState.done) {
                       return const Center(child: CircularProgressIndicator());
                     }
                     final resources = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: resources.length,
-                      itemBuilder: (context, index) =>
-                          ResourcePresentationWidget(
-                        resource: resources[index],
-                      ),
+                    return StreamBuilder(
+                      stream: filterController.stream,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        final filteredIds = snapshot.data;
+                        final Iterable<Resource> filteredTopLevelResources;
+                        if (filteredIds == null) {
+                          filteredTopLevelResources = resources;
+                        } else {
+                          filteredTopLevelResources = resources
+                              .where((e) => filteredIds.contains(e.id));
+                        }
+                        return ListView.builder(
+                          itemCount: filteredTopLevelResources.length,
+                          itemBuilder: (context, index) =>
+                              ResourcePresentationWidget(
+                            resource:
+                                filteredTopLevelResources.elementAt(index),
+                            filteredResources: filteredIds,
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
