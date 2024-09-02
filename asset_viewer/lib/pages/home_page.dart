@@ -14,52 +14,54 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Image.asset(
-            kAssets.tractianLogo,
-            width: 126,
-            height: 17,
-          ),
-        ),
-        body: FutureBuilder(
-          //ignore: discarded_futures
-          future: GetCompaniesUseCase(
-            companiesRepository: CompaniesRepository(
-              companiesApi: CompaniesApi(dio: Dio(kDioOptions)),
+  Widget build(BuildContext context) => SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Image.asset(
+              kAssets.tractianLogo,
+              width: 126,
+              height: 17,
             ),
-          )(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final companies = snapshot.data!;
-            return ListView.separated(
-              padding: const EdgeInsets.only(top: 30, left: 21, right: 22),
-              itemCount: companies.length,
-              itemBuilder: (context, index) => ListTile(
-                horizontalTitleGap: 16,
-                contentPadding:
-                    const EdgeInsets.only(left: 32, top: 24, bottom: 24),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                leading: ImageIcon(
-                  AssetImage(kAssets.companyIcon),
-                  size: 24,
-                ),
-                title: Text(
-                  '${companies[index].name} Unit',
-                  style: const TextStyle(fontSize: 18),
-                ),
-                onTap: () =>
-                    context.go(AssetPage.url, extra: companies[index].id),
+          ),
+          body: FutureBuilder(
+            //ignore: discarded_futures
+            future: GetCompaniesUseCase(
+              companiesRepository: CompaniesRepository(
+                companiesApi: CompaniesApi(dio: Dio(kDioOptions)),
               ),
-              separatorBuilder: (context, index) => const SizedBox(
-                height: 40,
-              ),
-            );
-          },
+            )(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final companies = snapshot.data!;
+              return ListView.separated(
+                padding: const EdgeInsets.only(top: 30, left: 21, right: 22),
+                itemCount: companies.length,
+                itemBuilder: (context, index) => ListTile(
+                  horizontalTitleGap: 16,
+                  contentPadding:
+                      const EdgeInsets.only(left: 32, top: 24, bottom: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  leading: ImageIcon(
+                    AssetImage(kAssets.companyIcon),
+                    size: 24,
+                  ),
+                  title: Text(
+                    '${companies[index].name} Unit',
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  onTap: () =>
+                      context.go(AssetPage.url, extra: companies[index].id),
+                ),
+                separatorBuilder: (context, index) => const SizedBox(
+                  height: 40,
+                ),
+              );
+            },
+          ),
         ),
       );
 }
