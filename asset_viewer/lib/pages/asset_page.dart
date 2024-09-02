@@ -1,17 +1,12 @@
 import 'dart:async';
-
 import 'package:asset_viewer/constants.dart';
-import 'package:asset_viewer/data/data_provider/assets_and_components_api.dart';
-import 'package:asset_viewer/data/data_provider/constants.dart';
-import 'package:asset_viewer/data/data_provider/locations_api.dart';
-import 'package:asset_viewer/data/repository/resources_repository.dart';
 import 'package:asset_viewer/domain/entities/resource.dart';
 import 'package:asset_viewer/domain/use_cases/filter_resources_use_case.dart';
 import 'package:asset_viewer/domain/use_cases/get_resources_use_case.dart';
+import 'package:asset_viewer/l10n/l10n.dart';
 import 'package:asset_viewer/service_locator.dart';
 import 'package:asset_viewer/theme.dart';
 import 'package:asset_viewer/widgets/resource_presentation_widget.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class AssetPage extends StatelessWidget {
@@ -27,8 +22,8 @@ class AssetPage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text(
-            'Assets',
-            style: TextStyle(fontSize: 18),
+            context.l10n.assets,
+            style: const TextStyle(fontSize: 18),
           ),
         ),
         body: FutureBuilder(
@@ -125,14 +120,15 @@ class _AssetPageState extends State<_AssetPage> {
               },
               style: const TextStyle(fontSize: 14),
               textAlignVertical: TextAlignVertical.center,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 filled: true,
-                prefixIcon: Icon(Icons.search, color: Color(0xFF8E98A3)),
-                border: OutlineInputBorder(borderSide: BorderSide.none),
-                fillColor: Color(0xFFEAEFF3),
+                prefixIcon: const Icon(Icons.search, color: Color(0xFF8E98A3)),
+                border: const OutlineInputBorder(borderSide: BorderSide.none),
+                fillColor: const Color(0xFFEAEFF3),
                 contentPadding: EdgeInsets.zero,
-                hintText: 'Search',
-                hintStyle: TextStyle(fontSize: 14, color: Color(0xFF8E98A3)),
+                hintText: context.l10n.search,
+                hintStyle:
+                    const TextStyle(fontSize: 14, color: Color(0xFF8E98A3)),
               ),
             ),
           ),
@@ -175,7 +171,7 @@ class _AssetPageState extends State<_AssetPage> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Sensor de energia',
+                      context.l10n.energySensor,
                       style: TextStyle(
                         fontSize: 14,
                         color: energySensorFilterIsActive ? Colors.white : null,
@@ -219,7 +215,7 @@ class _AssetPageState extends State<_AssetPage> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Crítico',
+                      context.l10n.critical,
                       style: TextStyle(
                         fontSize: 14,
                         color:

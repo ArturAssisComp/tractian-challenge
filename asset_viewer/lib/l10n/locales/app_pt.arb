@@ -1,0 +1,33 @@
+{
+  "@_TESTING": {},
+  "testString_": "isto é uma string de teste",
+  "genderAndCountTestMessage_": "{gender, select, male {Ele pressionou} female {Ela pressionou} other {Eles pressionaram}} o botão {count, plural, =0 {nenhuma vez} =1 {uma vez} other {{count} vezes}}.",
+  "@genderAndCountTestMessage_": {
+    "description": "A message with gender and pluralization",
+    "placeholders": {
+      "gender": {
+        "type": "String",
+        "example": "male"
+      },
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "@_FREE_WORDS": {},
+  "assets": "Recursos",
+  "search": "Pesquisar",
+  "critical": "Crítico",
+  "@_HOME_PAGE": {},
+  "companyUnit": "Unidade {companyName}",
+  "@companyUnit": {
+    "placeholders": {
+      "companyName": {
+        "type": "String"
+      }
+    }
+  },
+  "@_ASSET_PAGE": {},
+  "energySensor": "Sensor de energia"
+}

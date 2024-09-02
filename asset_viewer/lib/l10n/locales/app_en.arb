@@ -1,0 +1,35 @@
+{
+  "@_TESTING": {},
+  "testString_": "this is a test string",
+  "genderAndCountTestMessage_": "{gender, select, male {He} female {She} other {They}} pressed the button {count, plural, =0 {no times} =1 {once} other {{count} times}}.",
+  "@genderAndCountTestMessage_": {
+    "description": "A message with gender and pluralization",
+    "placeholders": {
+      "gender": {
+        "type": "String",
+        "example": "male"
+      },
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "@_FREE_WORDS": {
+    "description": "Words or phrases that are so common or simple that they are written directly without the need of any prefix"
+  },
+  "assets": "Assets",
+  "search": "Search",
+  "critical": "Critical",
+  "@_HOME_PAGE": {},
+  "companyUnit": "{companyName} Unit",
+  "@companyUnit": {
+    "placeholders": {
+      "companyName": {
+        "type": "String"
+      }
+    }
+  },
+  "@_ASSET_PAGE": {},
+  "energySensor": "Energy sensor"
+}

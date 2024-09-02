@@ -1,5 +1,6 @@
 import 'package:asset_viewer/constants.dart';
 import 'package:asset_viewer/domain/use_cases/get_companies_use_case.dart';
+import 'package:asset_viewer/l10n/l10n.dart';
 import 'package:asset_viewer/pages/asset_page.dart';
 import 'package:asset_viewer/service_locator.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,7 @@ class HomePage extends StatelessWidget {
                     size: 24,
                   ),
                   title: Text(
-                    '${companies[index].name} Unit',
+                    context.l10n.companyUnit(companies[index].name),
                     style: const TextStyle(fontSize: 18),
                   ),
                   onTap: () =>
