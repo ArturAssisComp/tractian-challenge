@@ -8,6 +8,7 @@ import 'package:asset_viewer/data/repository/resources_repository.dart';
 import 'package:asset_viewer/domain/entities/resource.dart';
 import 'package:asset_viewer/domain/use_cases/filter_resources_use_case.dart';
 import 'package:asset_viewer/domain/use_cases/get_resources_use_case.dart';
+import 'package:asset_viewer/service_locator.dart';
 import 'package:asset_viewer/theme.dart';
 import 'package:asset_viewer/widgets/resource_presentation_widget.dart';
 import 'package:dio/dio.dart';
@@ -31,14 +32,8 @@ class AssetPage extends StatelessWidget {
           ),
         ),
         body: FutureBuilder(
-          future: GetResourcesUseCase(
-            resourcesRepositoryInterface: ResourcesRepository(
-              locationsApi: LocationsApi(dio: Dio(kDioOptions)),
-              assetsAndComponentsApi: AssetsAndComponentsApi(
-                dio: Dio(kDioOptions),
-              ),
-            ),
-          )(companyId: companyId),
+          // ignore: discarded_futures
+          future: getIt<GetResourcesUseCase>()(companyId: companyId),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return const Center(child: CircularProgressIndicator());
@@ -64,7 +59,7 @@ class _AssetPageState extends State<_AssetPage> {
   String stringToFilter = '';
   bool energySensorFilterIsActive = false;
   bool criticalStatusFilterIsActive = false;
-  final filterResourcesUseCase = const FilterResourcesUseCase();
+  final filterResourcesUseCase = getIt<FilterResourcesUseCase>();
 
   bool stringFilter(Resource r) =>
       r.name.toLowerCase().contains(stringToFilter);
