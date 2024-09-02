@@ -69,8 +69,10 @@ class _ComponentPresentationWidget extends StatelessWidget {
             resource.name,
             style: const TextStyle(fontSize: 14),
           ),
-          if (resource.sensorType == kEnergySensorType) _kEnergyIcon,
-          if (resource.status == kCriticalStatus) _kCriticalIcon,
+          if (resource.sensorType.trim().toLowerCase() == kEnergySensorType)
+            _kEnergyIcon,
+          if (resource.status.trim().toLowerCase() == kCriticalStatus)
+            _kCriticalIcon,
         ],
       );
 }

@@ -19,6 +19,9 @@ final class ResourcesRepository implements ResourcesRepositoryInterface {
         await _locationsApi.getAllLocations(companyId: companyId);
     final (assets: assetModels, components: componentModels) =
         await _assetsAndComponentsApi.getAllAssets(companyId: companyId);
+    locationModels.sort((a, b) => a.name.compareTo(b.name));
+    assetModels.sort((a, b) => a.name.compareTo(b.name));
+    componentModels.sort((a, b) => a.name.compareTo(b.name));
     return fromModelsToResourceTree(
       locationModels,
       assetModels,

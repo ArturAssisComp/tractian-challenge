@@ -9,9 +9,11 @@ final themeData = ThemeData(
     iconColor: Colors.white,
   ),
   appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF17192D),
-      centerTitle: true,
-      titleTextStyle: TextStyle(color: Colors.white, fontSize: 18)),
+    backgroundColor: Color(0xFF17192D),
+    centerTitle: true,
+    titleTextStyle: TextStyle(color: Colors.white, fontSize: 18),
+    iconTheme: IconThemeData(color: Colors.white),
+  ),
   useMaterial3: true,
 );
 

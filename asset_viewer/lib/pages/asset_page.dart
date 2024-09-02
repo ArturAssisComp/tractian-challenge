@@ -8,18 +8,10 @@ import 'package:asset_viewer/data/repository/resources_repository.dart';
 import 'package:asset_viewer/domain/entities/resource.dart';
 import 'package:asset_viewer/domain/use_cases/filter_resources_use_case.dart';
 import 'package:asset_viewer/domain/use_cases/get_resources_use_case.dart';
+import 'package:asset_viewer/theme.dart';
 import 'package:asset_viewer/widgets/resource_presentation_widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
-final _kAlertIcon = ImageIcon(
-  size: 16,
-  AssetImage(kAssets.alertIcon),
-);
-final _kEnergySensorIcon = ImageIcon(
-  size: 16,
-  AssetImage(kAssets.outlinedEnergySensor),
-);
 
 class AssetPage extends StatelessWidget {
   static const path = 'assetPage';
@@ -69,40 +61,42 @@ class _AssetPage extends StatefulWidget {
 }
 
 class _AssetPageState extends State<_AssetPage> {
-  Set<String>? filteredEnergySensor;
-  Set<String>? filteredCriticalStatus;
-  Set<String>? filteredName;
-  Set<String>? currentFilter;
+  String stringToFilter = '';
   bool energySensorFilterIsActive = false;
   bool criticalStatusFilterIsActive = false;
   final filterResourcesUseCase = const FilterResourcesUseCase();
 
+  bool stringFilter(Resource r) =>
+      r.name.toLowerCase().contains(stringToFilter);
+  bool criticalStatusFilter(Resource r) =>
+      r is Component && r.status == kCriticalStatus;
+  bool energySensorFilter(Resource r) =>
+      r is Component && r.sensorType == kEnergySensorType;
+
   void updateFilter() {
     if (!energySensorFilterIsActive &&
         !criticalStatusFilterIsActive &&
-        filteredName == null) {
+        stringToFilter.isEmpty) {
       filterController.add(null);
       return;
     }
-    final newFilter = <String>{};
-    if (energySensorFilterIsActive) {
-      newFilter.addAll(filteredEnergySensor!);
-    }
-    if (criticalStatusFilterIsActive) {
-      if (newFilter.isEmpty) {
-        newFilter.addAll(filteredCriticalStatus!);
-      } else {
-        newFilter.intersection(filteredCriticalStatus!);
-      }
-    }
-    if (filteredName != null) {
-      if (newFilter.isEmpty) {
-        newFilter.addAll(filteredName!);
-      } else {
-        newFilter.intersection(filteredName!);
-      }
-    }
-    filterController.add(newFilter);
+    filterController.add(
+      filterResourcesUseCase(
+        resources: widget.resources,
+        query: (e) {
+          if (energySensorFilterIsActive && !energySensorFilter(e)) {
+            return false;
+          }
+          if (criticalStatusFilterIsActive && !criticalStatusFilter(e)) {
+            return false;
+          }
+          if (!stringFilter(e)) {
+            return false;
+          }
+          return true;
+        },
+      ),
+    );
   }
 
   StreamController<Set<String>?> filterController =
@@ -131,16 +125,7 @@ class _AssetPageState extends State<_AssetPage> {
             height: 36,
             child: TextField(
               onChanged: (newValue) {
-                if (newValue.isEmpty) {
-                  filteredName = null;
-                  updateFilter();
-                  return;
-                }
-                final sanitizedNewValue = newValue.trim().toLowerCase();
-                filteredName = filterResourcesUseCase(
-                    resources: resources,
-                    query: (e) =>
-                        e.name.toLowerCase().contains(sanitizedNewValue));
+                stringToFilter = newValue.trim().toLowerCase();
                 updateFilter();
               },
               style: const TextStyle(fontSize: 14),
@@ -164,6 +149,12 @@ class _AssetPageState extends State<_AssetPage> {
             children: [
               OutlinedButton(
                 style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith((_) {
+                    if (energySensorFilterIsActive) {
+                      return kPrimaryColor;
+                    }
+                    return null;
+                  }),
                   fixedSize: const WidgetStatePropertyAll(Size(166, 32)),
                   padding: const WidgetStatePropertyAll(
                     EdgeInsets.only(left: 16),
@@ -174,14 +165,26 @@ class _AssetPageState extends State<_AssetPage> {
                     ),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {
+                    energySensorFilterIsActive = !energySensorFilterIsActive;
+                  });
+                  updateFilter();
+                },
                 child: Row(
                   children: [
-                    _kEnergySensorIcon,
+                    ImageIcon(
+                      size: 16,
+                      AssetImage(kAssets.outlinedEnergySensor),
+                      color: energySensorFilterIsActive ? Colors.white : null,
+                    ),
                     const SizedBox(width: 6),
-                    const Text(
+                    Text(
                       'Sensor de energia',
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: energySensorFilterIsActive ? Colors.white : null,
+                      ),
                     ),
                   ],
                 ),
@@ -189,6 +192,12 @@ class _AssetPageState extends State<_AssetPage> {
               const SizedBox(width: 8),
               OutlinedButton(
                 style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith((_) {
+                    if (criticalStatusFilterIsActive) {
+                      return kPrimaryColor;
+                    }
+                    return null;
+                  }),
                   fixedSize: const WidgetStatePropertyAll(Size(94, 32)),
                   padding: const WidgetStatePropertyAll(
                     EdgeInsets.only(left: 16),
@@ -199,14 +208,28 @@ class _AssetPageState extends State<_AssetPage> {
                     ),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {
+                    criticalStatusFilterIsActive =
+                        !criticalStatusFilterIsActive;
+                  });
+                  updateFilter();
+                },
                 child: Row(
                   children: [
-                    _kAlertIcon,
+                    ImageIcon(
+                      size: 16,
+                      AssetImage(kAssets.alertIcon),
+                      color: criticalStatusFilterIsActive ? Colors.white : null,
+                    ),
                     const SizedBox(width: 6),
-                    const Text(
+                    Text(
                       'Crítico',
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color:
+                            criticalStatusFilterIsActive ? Colors.white : null,
+                      ),
                     ),
                   ],
                 ),
