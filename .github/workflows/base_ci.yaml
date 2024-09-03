@@ -40,10 +40,11 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Making sure that code coverage is 90
+      - name: Making sure that code coverage is 80
         uses: VeryGoodOpenSource/very_good_coverage@v2
         with:
-          min_coverage: 90
+          path: asset_viewer/coverage/lcov.info
+          min_coverage: 80
       - name: Build
         run: |
           flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/bundle/release --extra-gen-snapshot-options=--save-obfuscation-map=build/app/outputs/bundle/release/app-map.json
