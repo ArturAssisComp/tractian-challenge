@@ -19,8 +19,9 @@
     "description": "Words or phrases that are so common or simple that they are written directly without the need of any prefix"
   },
   "assets": "Assets",
-  "search": "Search",
   "critical": "Critical",
+  "retry": "Retry",
+  "search": "Search",
   "@_HOME_PAGE": {},
   "companyUnit": "{companyName} Unit",
   "@companyUnit": {
@@ -30,6 +31,7 @@
       }
     }
   },
+  "retryFetchCompaniesMessage": "Unfortunately, a failure occurred while fetching the companies. Please, try again later.",
   "@_ASSET_PAGE": {},
   "energySensor": "Energy sensor"
 }

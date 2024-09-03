@@ -13,8 +13,10 @@ class AssetPage extends StatelessWidget {
   static const path = 'assetPage';
   static const url = '/assetPage';
   final String companyId;
+  final String companyName;
   const AssetPage({
     required this.companyId,
+    required this.companyName,
     super.key,
   });
 
@@ -34,7 +36,7 @@ class AssetPage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             final resources = snapshot.data!;
-            return _AssetPage(resources: resources);
+            return _AssetPage(resources: resources, companyName: companyName);
           },
         ),
       );
@@ -42,8 +44,10 @@ class AssetPage extends StatelessWidget {
 
 class _AssetPage extends StatefulWidget {
   final List<Resource> resources;
+  final String companyName;
   const _AssetPage({
     required this.resources,
+    required this.companyName,
   });
 
   @override
@@ -229,6 +233,14 @@ class _AssetPageState extends State<_AssetPage> {
           ),
         ),
         const Divider(),
+        const SizedBox(height: 8),
+        Center(
+          child: Text(
+            widget.companyName,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+        ),
+        const SizedBox(height: 8),
         Expanded(
           child: StreamBuilder(
             stream: filterController.stream,

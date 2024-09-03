@@ -17,8 +17,9 @@
   },
   "@_FREE_WORDS": {},
   "assets": "Recursos",
-  "search": "Pesquisar",
   "critical": "Crítico",
+  "search": "Pesquisar",
+  "retry": "Tente novamente",
   "@_HOME_PAGE": {},
   "companyUnit": "Unidade {companyName}",
   "@companyUnit": {
@@ -28,6 +29,7 @@
       }
     }
   },
+  "retryFetchCompaniesMessage": "Infelizmente, uma falha ocorreu ao carregar as companhias. Por favor, tente novamente mais tarde.",
   "@_ASSET_PAGE": {},
   "energySensor": "Sensor de energia"
 }
