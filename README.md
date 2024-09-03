@@ -36,6 +36,11 @@ https://github.com/user-attachments/assets/1dc9b051-ae20-4419-bde0-1a2b7b124754
 sensor and status.
   - Use BloC to manage the state of the filter to handle the increase of complexity (for this 
   project, it was not necessary and not allowed)
+  - Highlight the matches, specially the string matches
+  - Study the possibility to maintain the subtree of any match for string search when there is
+  no match with its inner sub elements. With the match highlighting, this feature would satisfy
+  the use case of a user that wants to find an intermediate element but also access its inner 
+  elements
 - Add functionality
   - Add a double tap functionality to expand all the subtree of the double tapped element. The same
   to collapse it.
@@ -50,6 +55,7 @@ sensor and status.
   - Repositories between data and domain
   - Use cases between domain and user interface
   - Entities != Models
+- Time spent: 3 days
 - Unit tests and widget tests
 - Integration test
 - Dependency injection
