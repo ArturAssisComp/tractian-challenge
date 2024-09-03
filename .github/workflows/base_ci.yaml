@@ -3,6 +3,9 @@ jobs:
   verify_flutter_form_generator_package:
     name: Flutter Form Generator
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: asset_viewer
     steps:
       - uses: actions/checkout@v4
 
