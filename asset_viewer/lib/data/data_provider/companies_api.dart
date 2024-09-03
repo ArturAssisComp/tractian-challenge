@@ -2,7 +2,7 @@ import 'package:asset_viewer/data/data_provider/constants.dart';
 import 'package:asset_viewer/data/exceptions_and_errors.dart';
 import 'package:dio/dio.dart';
 
-final class CompaniesApi {
+class CompaniesApi {
   const CompaniesApi({required Dio dio}) : _dio = dio;
   final Dio _dio;
   Future<List<dynamic>> getAllCompanies() async {

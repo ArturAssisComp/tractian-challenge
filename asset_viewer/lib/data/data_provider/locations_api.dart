@@ -3,7 +3,7 @@ import 'package:asset_viewer/data/exceptions_and_errors.dart';
 import 'package:asset_viewer/data/models/models.dart';
 import 'package:dio/dio.dart';
 
-final class LocationsApi {
+class LocationsApi {
   final Dio _dio;
   const LocationsApi({required Dio dio}) : _dio = dio;
 
