@@ -7,6 +7,9 @@ finishing the check. It also allows filtering by name, energy sensor and critica
 status.
 
 ## Video of the project running
+https://github.com/user-attachments/assets/1dc9b051-ae20-4419-bde0-1a2b7b124754
+
+
 
 ## Future improvements
 - Fix bugs
@@ -51,4 +54,5 @@ sensor and status.
 - Integration test
 - Dependency injection
 - Localization
+- GitHub Actions pipeline for CI/CD
 
