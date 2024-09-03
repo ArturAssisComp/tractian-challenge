@@ -44,6 +44,11 @@ sensor and status.
   - Study the possibility to add e 'Expand All' functionality
 - Improve error handling mechanisms
 
+## Video of the integration test runner
+
+https://github.com/user-attachments/assets/2fc9db8c-f099-4128-b843-2362a7cc0459
+
+
 
 ## Technical aspects
 - "Clean" architecture (three layers): data, domain and user interface.
