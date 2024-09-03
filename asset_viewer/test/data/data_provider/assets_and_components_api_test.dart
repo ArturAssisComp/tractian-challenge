@@ -83,9 +83,10 @@ void main() {
       test('Should return empty list', () async {
         final res =
             Response<List<dynamic>>(data: [], requestOptions: RequestOptions());
-        when(() => dio
-                .get<List<dynamic>>(kEndPoints.assetsAndComponents(companyId)))
-            .thenAnswer((_) => Future.value(res));
+        when(
+          () =>
+              dio.get<List<dynamic>>(kEndPoints.assetsAndComponents(companyId)),
+        ).thenAnswer((_) => Future.value(res));
         final (assets: assets, components: components) =
             await assetsAndComponentsApi.getAllAssets(companyId: companyId);
         expect(assets, equals([]));
@@ -94,18 +95,24 @@ void main() {
 
       test('Should return a non-empty list', () async {
         final res = Response<List<dynamic>>(
-            data: json, requestOptions: RequestOptions());
-        when(() => dio
-                .get<List<dynamic>>(kEndPoints.assetsAndComponents(companyId)))
-            .thenAnswer((_) => Future.value(res));
+          data: json,
+          requestOptions: RequestOptions(),
+        );
+        when(
+          () =>
+              dio.get<List<dynamic>>(kEndPoints.assetsAndComponents(companyId)),
+        ).thenAnswer((_) => Future.value(res));
         final (assets: assets, components: components) =
             await assetsAndComponentsApi.getAllAssets(companyId: companyId);
         expect(assets, equals(assetModels));
         expect(components, equals(componentModels));
       });
       test('Should throw HttpDataException', () async {
-        when(() => dio.get<List<dynamic>>(
-            kEndPoints.assetsAndComponents(companyId))).thenAnswer(
+        when(
+          () => dio.get<List<dynamic>>(
+            kEndPoints.assetsAndComponents(companyId),
+          ),
+        ).thenAnswer(
           (_) => Future.error(
             DioException(
               requestOptions: RequestOptions(),
@@ -135,8 +142,11 @@ void main() {
       });
 
       test('Should throw DataAccessException', () async {
-        when(() => dio.get<List<dynamic>>(
-            kEndPoints.assetsAndComponents(companyId))).thenAnswer(
+        when(
+          () => dio.get<List<dynamic>>(
+            kEndPoints.assetsAndComponents(companyId),
+          ),
+        ).thenAnswer(
           (_) => Future.error(
             DioException(
               requestOptions: RequestOptions(),
@@ -152,8 +162,11 @@ void main() {
       });
 
       test('Should not intercept errors', () async {
-        when(() => dio.get<List<dynamic>>(
-            kEndPoints.assetsAndComponents(companyId))).thenAnswer(
+        when(
+          () => dio.get<List<dynamic>>(
+            kEndPoints.assetsAndComponents(companyId),
+          ),
+        ).thenAnswer(
           (_) => Future.error(Error()),
         );
         expect(

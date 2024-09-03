@@ -3,7 +3,7 @@ on:
   push:
 jobs:
   verify_flutter_form_generator_package:
-    name: Flutter Form Generator
+    name: Traction Challenge
     runs-on: ubuntu-latest
     defaults:
       run:

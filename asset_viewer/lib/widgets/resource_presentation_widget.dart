@@ -261,7 +261,9 @@ class _ExpansibleLocationOrAssetPresentationWidgetState
             ...List.generate(
               indentCount,
               (i) => const SizedBox(
-                  height: _kComponentHeight, child: _kVerticalDivider),
+                height: _kComponentHeight,
+                child: _kVerticalDivider,
+              ),
             ),
             InkWell(
               onTap: () => setState(() {

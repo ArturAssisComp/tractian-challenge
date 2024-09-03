@@ -19,7 +19,8 @@ void setup() {
     ..registerFactory<LocationsApi>(() => LocationsApi(dio: getIt<Dio>()))
     ..registerFactory<CompaniesApi>(() => CompaniesApi(dio: getIt<Dio>()))
     ..registerFactory<AssetsAndComponentsApi>(
-        () => AssetsAndComponentsApi(dio: getIt<Dio>()))
+      () => AssetsAndComponentsApi(dio: getIt<Dio>()),
+    )
     // repositories
     ..registerFactory<CompaniesRepositoryInterface>(
       () => CompaniesRepository(companiesApi: getIt<CompaniesApi>()),
@@ -34,8 +35,14 @@ void setup() {
     ..registerFactory<FilterResourcesUseCase>(
       FilterResourcesUseCase.new,
     )
-    ..registerFactory<GetResourcesUseCase>(() => GetResourcesUseCase(
-        resourcesRepositoryInterface: getIt<ResourcesRepositoryInterface>()))
-    ..registerFactory<GetCompaniesUseCase>(() => GetCompaniesUseCase(
-        companiesRepository: getIt<CompaniesRepositoryInterface>()));
+    ..registerFactory<GetResourcesUseCase>(
+      () => GetResourcesUseCase(
+        resourcesRepositoryInterface: getIt<ResourcesRepositoryInterface>(),
+      ),
+    )
+    ..registerFactory<GetCompaniesUseCase>(
+      () => GetCompaniesUseCase(
+        companiesRepository: getIt<CompaniesRepositoryInterface>(),
+      ),
+    );
 }

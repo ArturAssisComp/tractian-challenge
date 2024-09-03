@@ -82,7 +82,7 @@ final assetModels = <AssetModel>[
     id: d.assets.a1.id,
     name: d.assets.a1.name,
     locationId: d.assets.a1.locationId,
-  )
+  ),
 ];
 final componentModels = <ComponentModel>[
   ComponentModel(
@@ -240,8 +240,10 @@ void main() {
             (assets: assetModels, components: componentModels),
           ),
         );
-        expect(() => resourcesRepository.getAllResources(companyId: companyId),
-            throwsException);
+        expect(
+          () => resourcesRepository.getAllResources(companyId: companyId),
+          throwsException,
+        );
       });
 
       test('Should throw an Error when assets and components Api fails',
@@ -252,8 +254,10 @@ void main() {
             .thenAnswer(
           (_) => Future.error(Error()),
         );
-        expect(() => resourcesRepository.getAllResources(companyId: companyId),
-            throwsA(isA<Error>()));
+        expect(
+          () => resourcesRepository.getAllResources(companyId: companyId),
+          throwsA(isA<Error>()),
+        );
       });
     });
   });

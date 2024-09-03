@@ -25,7 +25,8 @@ class LocationsApi {
         );
       }
       throw DataAccessException(
-          'Unable to load locations for companyId: $companyId (${e.message})');
+        'Unable to load locations for companyId: $companyId (${e.message})',
+      );
     }
   }
 }

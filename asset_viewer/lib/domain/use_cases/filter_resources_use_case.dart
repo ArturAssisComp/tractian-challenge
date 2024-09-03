@@ -3,9 +3,10 @@ import 'package:asset_viewer/domain/entities/resource.dart';
 final class FilterResourcesUseCase {
   const FilterResourcesUseCase();
 
-  Set<String>? call(
-      {required List<Resource> resources,
-      required bool Function(Resource) query}) {
+  Set<String>? call({
+    required List<Resource> resources,
+    required bool Function(Resource) query,
+  }) {
     final result = <String>{};
     for (final resource in resources) {
       result.addAll(filterResource(resource, query));

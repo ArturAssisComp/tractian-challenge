@@ -41,7 +41,9 @@ void main() {
       });
       test('Should return a non-empty list', () async {
         final res = Response<List<dynamic>>(
-            data: json1, requestOptions: RequestOptions());
+          data: json1,
+          requestOptions: RequestOptions(),
+        );
         when(() => dio.get<List<dynamic>>(kEndPoints.locations(companyId)))
             .thenAnswer((_) => Future.value(res));
         final locations =
